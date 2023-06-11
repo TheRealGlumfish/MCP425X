@@ -1,0 +1,6 @@
+Microchip_MCP4251 KEYWORD1
+begin KEYWORD2
+incrememntWiper KEYWORD2
+decrementWiper KEYWORD2
+setWiper KEYWORD2
+getWiper KEYWORD2
