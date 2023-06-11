@@ -33,7 +33,7 @@ void Microchip_MCP4251::begin()
 }
 
 // increments the digital potentiometer wiper and returns if there is an error
-bool Microchip_MCP4251::incrementWiper(bool potSelect)
+bool Microchip_MCP4251::incrementWiper(potSelect_t potSelect)
 {
     bool error = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
@@ -58,7 +58,7 @@ bool Microchip_MCP4251::incrementWiper(bool potSelect)
 }
 
 // increments the digital potentiometer wiper n times and returns if there is an error
-bool Microchip_MCP4251::incrementWiper(bool potSelect, uint16_t n)
+bool Microchip_MCP4251::incrementWiper(potSelect_t potSelect, uint16_t n)
 {
     bool error = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
@@ -86,7 +86,7 @@ bool Microchip_MCP4251::incrementWiper(bool potSelect, uint16_t n)
 }
 
 // decrements the digital potentiometer wiper and returns if there is an error
-bool Microchip_MCP4251::decrementWiper(bool potSelect)
+bool Microchip_MCP4251::decrementWiper(potSelect_t potSelect)
 {
     bool error = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
@@ -111,7 +111,7 @@ bool Microchip_MCP4251::decrementWiper(bool potSelect)
 }
 
 // decrements the digital potentiometer wiper n times and returns if there is an error
-bool Microchip_MCP4251::decrementWiper(bool potSelect, uint16_t n)
+bool Microchip_MCP4251::decrementWiper(potSelect_t potSelect, uint16_t n)
 {
     bool error = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
@@ -139,7 +139,7 @@ bool Microchip_MCP4251::decrementWiper(bool potSelect, uint16_t n)
 }
 
 // reads the digital potentiometer wiper position and returns the value or 0xFFFF if there is an error
-uint16_t Microchip_MCP4251::getWiper(bool potSelect)
+uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
 {
     uint16_t readData;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
@@ -172,7 +172,7 @@ uint16_t Microchip_MCP4251::getWiper(bool potSelect)
 }
 
 // sets the position of the wiper and returns if there is an error
-bool Microchip_MCP4251::setWiper(bool potSelect, uint16_t position)
+bool Microchip_MCP4251::setWiper(potSelect_t potSelect, uint16_t position)
 {
     bool error = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)

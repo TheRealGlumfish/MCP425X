@@ -12,22 +12,23 @@
 #include "Arduino.h"
 #include <SPI.h>
 
-// TODO: Make potSelect an enum with {A, B}
+typedef enum {P0, P1} potSelect_t;
 
 class Microchip_MCP4251
 {
 public:
     uint16_t resistance;
+    bool commandError = false;
     
     Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance);
     Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance, SPISettings SPIConf);
     void begin();
-    bool incrementWiper(bool potSelect);
-    bool incrementWiper(bool potSelect, uint16_t n);
-    bool decrementWiper(bool potSelect);
-    bool decrementWiper(bool potSelect, uint16_t n);
-    uint16_t getWiper(bool potSelect);
-    bool setWiper(bool potSelect, uint16_t position);
+    bool incrementWiper(potSelect_t potSelect);
+    bool incrementWiper(potSelect_t potSelect, uint16_t n);
+    bool decrementWiper(potSelect_t potSelect);
+    bool decrementWiper(potSelect_t potSelect, uint16_t n);
+    uint16_t getWiper(potSelect_t potSelect);
+    bool setWiper(potSelect_t potSelect, uint16_t position);
 
 private:
     SPISettings _SPIConf; // default settings using SPI Mode 0 (Mode 3 is also supported)
