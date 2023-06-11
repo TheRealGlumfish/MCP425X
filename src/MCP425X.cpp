@@ -32,35 +32,34 @@ void Microchip_MCP4251::begin()
     SPI.begin();
 }
 
-// increments the digital potentiometer wiper and returns if there is an error
-bool Microchip_MCP4251::incrementWiper(potSelect_t potSelect)
+// increments the digital potentiometer wiper
+void Microchip_MCP4251::incrementWiper(potSelect_t potSelect)
 {
-    bool error = false;
+    commandError = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
     if(potSelect)
     {
         if(SPI.transfer(0b00010100) < 0b11111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     else
     {
         if(SPI.transfer(0b00000100) < 0b11111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH);
-    return error;
 }
 
-// increments the digital potentiometer wiper n times and returns if there is an error
-bool Microchip_MCP4251::incrementWiper(potSelect_t potSelect, uint16_t n)
+// increments the digital potentiometer wiper n times
+void Microchip_MCP4251::incrementWiper(potSelect_t potSelect, uint16_t n)
 {
-    bool error = false;
+    commandError = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
     for(int i = 0; i < n; i++)
@@ -69,51 +68,49 @@ bool Microchip_MCP4251::incrementWiper(potSelect_t potSelect, uint16_t n)
         {
             if(SPI.transfer(0b00010100) < 0b11111111)
             {
-                error = true;
+                commandError = true;
             }
         }
         else
         {
             if(SPI.transfer(0b00000100) < 0b11111111)
             {
-                error = true;
+                commandError = true;
             }
         }
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH);
-    return error;
 }
 
-// decrements the digital potentiometer wiper and returns if there is an error
-bool Microchip_MCP4251::decrementWiper(potSelect_t potSelect)
+// decrements the digital potentiometer wiper
+void Microchip_MCP4251::decrementWiper(potSelect_t potSelect)
 {
-    bool error = false;
+    commandError = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
     if(potSelect)
     {
         if(SPI.transfer(0b00011000) < 0b11111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     else
     {
         if(SPI.transfer(0b00001000) < 0b11111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH); // de-asserts the CS pin after the transaction has finished
-    return error;
 }
 
-// decrements the digital potentiometer wiper n times and returns if there is an error
-bool Microchip_MCP4251::decrementWiper(potSelect_t potSelect, uint16_t n)
+// decrements the digital potentiometer wiper n times
+void Microchip_MCP4251::decrementWiper(potSelect_t potSelect, uint16_t n)
 {
-    bool error = false;
+    commandError = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
     for(int i = 0; i < n; i++)
@@ -122,25 +119,25 @@ bool Microchip_MCP4251::decrementWiper(potSelect_t potSelect, uint16_t n)
         {
             if(SPI.transfer(0b00011000) < 0b11111111)
             {
-                error = true;
+                commandError = true;
             }
         }
         else
         {
             if(SPI.transfer(0b00001000) < 0b11111111)
             {
-                error = true;
+                commandError = true;
             }
         }
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH); // de-asserts the CS pin after the transaction has finished
-    return error;
 }
 
 // reads the digital potentiometer wiper position and returns the value or 0xFFFF if there is an error
 uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
 {
+    commandError = true;
     uint16_t readData;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
@@ -148,6 +145,7 @@ uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
     {
         if((readData = SPI.transfer16(0b0001110000000000)) < 0b1111111000000000)
         {
+            commandError = true;
             readData = 0xFFFF;
         }
         else
@@ -159,11 +157,12 @@ uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
     {
         if((readData = SPI.transfer16(0b0000110000000000)) < 0b1111111000000000)
         {
-            readData = 0xFFFF;
+            commandError = true;
         }
         else
         {
             readData -= 0b1111111000000000;
+            readData = 0xFFFF;
         }
     }
     SPI.endTransaction();
@@ -172,27 +171,26 @@ uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
 }
 
 // sets the position of the wiper and returns if there is an error
-bool Microchip_MCP4251::setWiper(potSelect_t potSelect, uint16_t position)
+void Microchip_MCP4251::setWiper(potSelect_t potSelect, uint16_t position)
 {
-    bool error = false;
+    commandError = false;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
     if(potSelect)
     {
         if(SPI.transfer16(0b0001000000000000 | position) < 0b1111111111111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     else
     {
         if(SPI.transfer16(0b0000000000000000 | position) < 0b1111111111111111)
         {
-            error = true;
+            commandError = true;
         }
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH); // de-asserts the CS pin after the transaction has finished
-    return error;
 }
 

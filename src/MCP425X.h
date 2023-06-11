@@ -17,18 +17,18 @@ typedef enum {P0, P1} potSelect_t;
 class Microchip_MCP4251
 {
 public:
-    uint16_t resistance;
-    bool commandError = false;
+    uint16_t resistance; // potentiometer resistance, used for calculating resistance between W and B terminals
+    bool commandError = false; // set to true if a command fails (there is a command error), gets reset between commands
     
     Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance);
     Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance, SPISettings SPIConf);
     void begin();
-    bool incrementWiper(potSelect_t potSelect);
-    bool incrementWiper(potSelect_t potSelect, uint16_t n);
-    bool decrementWiper(potSelect_t potSelect);
-    bool decrementWiper(potSelect_t potSelect, uint16_t n);
+    void incrementWiper(potSelect_t potSelect);
+    void incrementWiper(potSelect_t potSelect, uint16_t n);
+    void decrementWiper(potSelect_t potSelect);
+    void decrementWiper(potSelect_t potSelect, uint16_t n);
     uint16_t getWiper(potSelect_t potSelect);
-    bool setWiper(potSelect_t potSelect, uint16_t position);
+    void setWiper(potSelect_t potSelect, uint16_t position);
 
 private:
     SPISettings _SPIConf; // default settings using SPI Mode 0 (Mode 3 is also supported)
