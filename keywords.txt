@@ -5,3 +5,6 @@ incrememntWiper KEYWORD2
 decrementWiper KEYWORD2
 setWiper KEYWORD2
 getWiper KEYWORD2
+setResistance KEYWORD2
+getResistance KEYWORD2
+getStatus KEYWORD2

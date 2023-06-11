@@ -10,18 +10,18 @@
 
 #include "MCP425X.h"
 
-Microchip_MCP4251::Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance)
+Microchip_MCP4251::Microchip_MCP4251(uint8_t CSPin, uint16_t resistance)
 {
     _SPIConf = SPISettings(10000000, MSBFIRST, SPI_MODE0);
     _CSPin = CSPin;
-    resistance = potResistance;
+    potResistance = resistance;
 }
 
-Microchip_MCP4251::Microchip_MCP4251(uint8_t CSPin, uint16_t potResistance, SPISettings SPIConf)
+Microchip_MCP4251::Microchip_MCP4251(uint8_t CSPin, uint16_t resistance, SPISettings SPIConf)
 {
     _SPIConf = SPIConf;
     _CSPin = CSPin;
-    resistance = potResistance;
+    potResistance = resistance;
 }
 
 // initializes SPI bus and de-asserts CS pin
@@ -137,7 +137,7 @@ void Microchip_MCP4251::decrementWiper(potSelect_t potSelect, uint16_t n)
 // reads the digital potentiometer wiper position and returns the value or 0xFFFF if there is an error
 uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
 {
-    commandError = true;
+    commandError = false;
     uint16_t readData;
     digitalWrite(_CSPin, LOW); // asserts the CS pin (active low)
     SPI.beginTransaction(_SPIConf);
@@ -158,6 +158,7 @@ uint16_t Microchip_MCP4251::getWiper(potSelect_t potSelect)
         if((readData = SPI.transfer16(0b0000110000000000)) < 0b1111111000000000)
         {
             commandError = true;
+            readData = 0xFFFF;
         }
         else
         {
@@ -192,5 +193,32 @@ void Microchip_MCP4251::setWiper(potSelect_t potSelect, uint16_t position)
     }
     SPI.endTransaction();
     digitalWrite(_CSPin, HIGH); // de-asserts the CS pin after the transaction has finished
+}
+
+// gets the resistance between terminal B and W
+uint16_t Microchip_MCP4251::getResistance(potSelect_t potSelect)
+{
+    return map(getWiper(potSelect), 0, 0, 0x100, potResistance);
+}
+
+// sets the resistance between terminal B and W
+void Microchip_MCP4251::setResistance(potSelect_t potSelect, uint16_t resistance)
+{
+    setWiper(potSelect, map(resistance, 0, 0, potResistance, 0x100));
+}
+
+// reads the status registers and returns if the IC is in the shutdown state
+bool Microchip_MCP4251::getStatus()
+{
+    commandError = false;
+    uint16_t readData;
+    SPI.beginTransaction(_SPIConf);
+    if((readData = SPI.transfer16(0b0101110000000000)) < 0b1111111000000000)
+    {
+        commandError = true;
+        return false;
+    }
+    readData = readData & 0b0000000000000010;
+    return readData;
 }
 
